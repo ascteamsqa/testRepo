@@ -42,4 +42,29 @@ Cypress.Commands.add('login', () => {
 });
 
 
+Cypress.Commands.add('loginAMT', () => {
+
+      cy.visit("https://preportal1.ace4news.com/");
+            cy.contains('li a', 'Login').click();
+            // Type into Email input
+                cy.get('#email')
+                  .should('be.visible')
+                  .type('barracuda60671@mailshan.com')
+                  .should('have.value', 'barracuda60671@mailshan.com');
+
+                // Type into Password input
+                cy.get('#password')
+                  .should('be.visible')
+                  .type('test123456')
+                  .should('have.value', 'test123456');
+
+                  cy.contains('button', 'Login').click();
+                  //Asssert URL should include new transfer
+                  cy.url().should('include', '/dashboard');
+});
+
+
+
+
+
 
