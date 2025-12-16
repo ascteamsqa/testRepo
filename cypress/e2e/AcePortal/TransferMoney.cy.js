@@ -1,31 +1,18 @@
-// This test will Successfully logged in to the system
+import TransferPage from '../../support/pageObjects/transferPage';
 
-    beforeEach(() => {
-        cy.login();        // session is restored automatically
-        cy.visit('/dashboard');
-    });
+describe('Transfer', () => {
+beforeEach(() => {
+    // Runs before each test
+    cy.loginAMT()
+  })
+  it('should create a cash transfer', () => {
 
-  it('Transfer', () => {
-            cy.contains('a', 'Send Money').click({force:true});
+    TransferPage.clickSendMoney();
+    TransferPage.verifyTransferPage();
 
-            cy.url().should('include', '/new-transfer');
-            // Step 1: open the select2 dropdown
-            cy.get('#sending_country + .select2 .select2-selection')
-              .click();
+    TransferPage.selectSendingCountry('Australia');
+    TransferPage.selectReceivingCountry('Pakistan');
+    TransferPage.selectCashMethod();
 
-            cy.get('body')
-              .find('.select2-results__option')
-              .contains('Australia')
-              .click();
-
-            cy.contains('span', 'Transfer Money To').click();
-
-               cy.get('body')
-               .find('.select2-results__option')
-               .contains('Pakistan')
-               .click();
-
-            cy.get('#method_Cash').click();
-
-
-    })
+  });
+});
