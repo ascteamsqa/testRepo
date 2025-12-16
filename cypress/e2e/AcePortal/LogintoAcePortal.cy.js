@@ -1,75 +1,44 @@
+import LoginPage from '../../support/pageObjects/loginPage';
+
 describe('ACE Money Transfer Login to portal', () => {
 
-// This test will send a error message as email and password entered are incorrect/not registered.
-  it('Try to login to ace money transfer with invalid or non-registered credentials', () => {
-    cy.visit("https://preportal1.ace4news.com/");
-    cy.contains('li a', 'Login').click();
-    // Type into Email input
-        cy.get('#email')
-          .should('be.visible')
-          .type('test@example.com')
-          .should('have.value', 'test@example.com');
+  const loginPage = new LoginPage();
 
-        // Type into Password input
-        cy.get('#password')
-          .should('be.visible')
-          .type('Password123')
-          .should('have.value', 'Password123');
+  it('Login with invalid or non-registered credentials', () => {
+    loginPage.visit();
+    loginPage.clickLoginMenu();
 
-          cy.contains('button', 'Login').click();
+    loginPage.enterEmail('test@example.com');
+    loginPage.enterPassword('Password123');
+    loginPage.clickLoginButton();
 
-          cy.get('#error-message')
-            .should('be.visible')
-            .and('contain.text', 'The provided email address is not registered. Please Sign Up');
+    loginPage.verifyErrorMessage(
+      'The provided email address is not registered. Please Sign Up'
+    );
+  });
 
+  it('Login with valid credentials but unverified email', () => {
+    loginPage.visit();
+    loginPage.clickLoginMenu();
 
-  })
+    loginPage.enterEmail('testing@gmail.com');
+    loginPage.enterPassword('test123456');
+    loginPage.clickLoginButton();
 
-  })
+    loginPage.verifyErrorMessage(
+      'Your account is not verified. We have sent you an email to confirm your registration.'
+    );
+  });
 
-  // This test will try to login with a valid credentials but without email verification
-  it('Try to login to ace money transfer with invalid or non-registered credentials', () => {
-      cy.visit("https://preportal1.ace4news.com/");
-      cy.contains('li a', 'Login').click();
-      // Type into Email input
-          cy.get('#email')
-            .should('be.visible')
-            .type('testing@gmail.com')
-            .should('have.value', 'testing@gmail.com');
+  it('Successful login with valid credentials', () => {
+    loginPage.visit();
+    loginPage.clickLoginMenu();
 
-          // Type into Password input
-          cy.get('#password')
-            .should('be.visible')
-            .type('test123456')
-            .should('have.value', 'test123456');
+    loginPage.enterEmail('barracuda60671@mailshan.com');
+    loginPage.enterPassword('test123456');
+    loginPage.clickLoginButton();
 
-            cy.contains('button', 'Login').click();
+    loginPage.verifySuccessfulLogin();
+  });
 
-            cy.get('#error-message')
-              .should('be.visible')
-              .and('contain.text', 'Your account is not verified. We have sent you an email to confirm your registration. Please click on the activation link to activate your account. If you did not receive the email, please check SPAM folder of your mailbox.');
-
-
-    })
-
-// This test will Successfully logged in to the system
-  it('Try to login to ace money transfer with invalid or non-registered credentials', () => {
-      cy.visit("https://preportal1.ace4news.com/");
-      cy.contains('li a', 'Login').click();
-      // Type into Email input
-          cy.get('#email')
-            .should('be.visible')
-            .type('barracuda60671@mailshan.com')
-            .should('have.value', 'barracuda60671@mailshan.com');
-
-          // Type into Password input
-          cy.get('#password')
-            .should('be.visible')
-            .type('test123456')
-            .should('have.value', 'test123456');
-
-            cy.contains('button', 'Login').click();
-            //Asssert URL should include new transfer
-            cy.url().should('include', '/dashboard');
-
-    })
+});
