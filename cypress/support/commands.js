@@ -23,49 +23,23 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-Cypress.Commands.add('loginByApi', () => {
-  cy.session(
-    'user-session',
-    () => {
-      cy.request({
-        method: 'POST',
-        url: 'https://preportal1.ace4news.com/authenticate',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: {
-          email: 'ascteamsqa+02@gmail.com',
-          password: '@Qwerty123'
-        },
-        failOnStatusCode: false
-      }).then((response) => {
-        expect(response.status).to.eq(200)
+Cypress.Commands.add('login', () => {
 
-        // ✅ WRITE TO FILE
-        cy.task(
-          'log',
-          `LOGIN API RESPONSE: status=${response.status}, body=${JSON.stringify(response.body)}`
-        )
-      })
-    },
-    {
-      validate: () => {
-        cy.request({
-          method: 'GET',
-          url: 'https://preportal1.ace4news.com/authenticate',
-          failOnStatusCode: false
-        }).then((res) => {
-          expect(res.status).to.eq(405)
+  cy.visit('https://prebackoffice1.ace4news.com/login');
 
-          // ✅ WRITE TO FILE
-          cy.task(
-            'log',
-            `DASHBOARD VALIDATE RESPONSE: status=${res.status}`
-          )
-        })
-      }
-    }
-  )
-})
+  cy.get('input[name="user_email"]')
+    .should('be.visible')
+    .type('bilalahmad');
+
+  cy.get('input[name="password"]')
+    .should('be.visible')
+    .type('Backoffice@123', { log: false });
+
+  cy.get('button[type="submit"]').click();
+
+  // Verify login success
+  cy.url().should('not.include', '/login');
+});
+
 
 
